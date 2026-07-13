@@ -12,7 +12,7 @@ This project is intended for demonstration and educational purposes only — it 
 
 ## About
 
-This repository is a curated collection of integration work spanning **NVIDIA on Google Cloud**, covering Agent Platform integrations, agentic AI patterns with ADK, MCP, A2A, model deployment and training, and deployment of NVIDIA-powered agents to **Google's Agent Platform**.
+This repository is a curated collection of integration work spanning **NVIDIA on Google Cloud**, covering Gemini Enterprise Agent Platform integrations, agentic AI patterns with ADK, MCP, A2A, model deployment and training, and deployment of NVIDIA-powered agents to **Gemini Enterprise Agent Platform**.
 
 It starts with a minimal two-section structure — quickstarts and demos — and will grow as needed.
 
@@ -36,15 +36,15 @@ It starts with a minimal two-section structure — quickstarts and demos — and
 ## Prerequisites
 
 - A Google Cloud project with billing enabled
-- Access to **NVIDIA models on Vertex AI** (see [NVIDIA on Vertex AI docs](https://cloud.google.com/vertex-ai/docs/partner-models/nvidia))
+- Access to **NVIDIA models on Gemini Enterprise Agent Platform** (see [NVIDIA on Gemini Enterprise Agent Platform docs](https://cloud.google.com/vertex-ai/docs/partner-models/nvidia))
 - `gcloud` CLI installed and authenticated
 - Python 3.11+ and Node.js 20+ for most modules
 
 ## Technology Stack
 
-- **Models:** NVIDIA (via NVIDIA API and Vertex AI), Gemini
-- **Agent frameworks:** Google ADK, A2A, MCP, Agent Run time, Agent Platform
-- **Infrastructure:** GKE, Cloud Run, Google Cloud Agent Platform, BigQuery, AlloyDB
+- **Models:** NVIDIA (via NVIDIA API and Gemini Enterprise Agent Platform), Gemini
+- **Agent frameworks:** Google ADK, A2A, MCP, Agent Run time, Gemini Enterprise Agent Platform
+- **Infrastructure:** GKE, Cloud Run, Gemini Enterpries Agent Platform, BigQuery, AlloyDB
 - **Tooling:** gcloud, Terraform (where applicable)
 
 ## Contributing
