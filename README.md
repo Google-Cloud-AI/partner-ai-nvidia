@@ -14,14 +14,13 @@ This project is intended for demonstration and educational purposes only — it 
 
 This repository is a curated collection of integration work spanning **NVIDIA on Google Cloud**, covering Gemini Enterprise Agent Platform integrations, agentic AI patterns with ADK, MCP, A2A, model deployment and training, and deployment of NVIDIA-powered agents to **Gemini Enterprise Agent Platform**.
 
-It starts with a minimal two-section structure — quickstarts and demos — and will grow as needed.
-
 ## Repository Structure
 
 | Section | Description |
 |---|---|
 | [`01-quickstart/`](./01-quickstart/) | Minimal, runnable quickstarts to get up and running fast |
 | [`02-demos/`](./02-demos/) | End-to-end demonstration applications |
+| [`03-workshops/`](./03-workshops/) | Hands-on, guided workshops for building NVIDIA-accelerated AI workloads on Google Cloud. |
 
 ## Getting Started
 
@@ -32,11 +31,12 @@ It starts with a minimal two-section structure — quickstarts and demos — and
    ```
 2. Start with [`01-quickstart/`](./01-quickstart/) to get up and running.
 3. Explore end-to-end examples in [`02-demos/`](./02-demos/).
+4. Dive deep into workshops in [`03-workshops/`](./03-workshops/).
 
 ## Prerequisites
 
 - A Google Cloud project with billing enabled
-- Access to **NVIDIA models on Gemini Enterprise Agent Platform** (see [NVIDIA on Gemini Enterprise Agent Platform docs](https://cloud.google.com/vertex-ai/docs/partner-models/nvidia))
+- Access to **NVIDIA models on Gemini Enterprise Agent Platform** (see [partner model deployment documentation](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/deploy-partner-models))
 - `gcloud` CLI installed and authenticated
 - Python 3.11+ and Node.js 20+ for most modules
 
@@ -44,7 +44,7 @@ It starts with a minimal two-section structure — quickstarts and demos — and
 
 - **Models:** NVIDIA (via NVIDIA API and Gemini Enterprise Agent Platform), Gemini
 - **Agent frameworks:** Google ADK, A2A, MCP, Agent Run time, Gemini Enterprise Agent Platform
-- **Infrastructure:** GKE, Cloud Run, Gemini Enterpries Agent Platform, BigQuery, AlloyDB
+- **Infrastructure:** GKE, Cloud Run, Gemini Enterprise Agent Platform, BigQuery, AlloyDB, JAX, CUDA, Flax/Optax
 - **Tooling:** gcloud, Terraform (where applicable)
 
 ## Contributing

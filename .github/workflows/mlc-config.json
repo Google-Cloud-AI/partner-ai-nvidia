@@ -1,5 +1,3 @@
 {
-  "ignorePatterns": [
-    { "pattern": "^https://github.com/PTA-Co-innovation-Team/partner-ai-anthropic" }
-  ]
+  "ignorePatterns": []
 }

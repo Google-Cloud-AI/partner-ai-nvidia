@@ -1,0 +1,7 @@
+project_id   = "your-gcp-project-id"
+region       = "us-central1"
+zone         = "us-central1-a"
+cluster_name = "jax-gpu-cluster"
+machine_type = "g2-standard-24"
+gpu_type     = "nvidia-l4"
+gpu_count    = 2
