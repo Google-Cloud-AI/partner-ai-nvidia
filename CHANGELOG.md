@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Reset the repository to a minimal two-section structure — [`01-quickstart/`](./01-quickstart/) and [`02-demos/`](./02-demos/) — to grow as needed. Removed the previous section layout (`01-getting-started` through `07-reference-architectures`, and `docs/`).
+- Renamed `01-quickstart/` to [`01-quickstarts/`](./01-quickstarts/) and added [`03-guides/`](./03-guides/) and [`04-solution-accelerators/`](./04-solution-accelerators/) sections.
+- Reset the repository to a minimal two-section structure — [`01-quickstarts/`](./01-quickstarts/) and [`02-demos/`](./02-demos/) — to grow as needed. Removed the previous section layout (`01-getting-started` through `07-reference-architectures`, and `docs/`).
 
 
 ## [0.1.0] - 2026-05-27

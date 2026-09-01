@@ -14,14 +14,16 @@ This project is intended for demonstration and educational purposes only — it 
 
 This repository is a curated collection of integration work spanning **NVIDIA on Google Cloud**, covering Gemini Enterprise Agent Platform integrations, agentic AI patterns with ADK, MCP, A2A, model deployment and training, and deployment of NVIDIA-powered agents to **Gemini Enterprise Agent Platform**.
 
-It starts with a minimal two-section structure — quickstarts and demos — and will grow as needed.
+It is organized into quickstarts, demos, guides, and solution accelerators, and will grow as needed.
 
 ## Repository Structure
 
 | Section | Description |
 |---|---|
-| [`01-quickstart/`](./01-quickstart/) | Minimal, runnable quickstarts to get up and running fast |
+| [`01-quickstarts/`](./01-quickstarts/) | Minimal, runnable quickstarts to get up and running fast |
 | [`02-demos/`](./02-demos/) | End-to-end demonstration applications |
+| [`03-guides/`](./03-guides/) | Guides and best practices (work in progress) |
+| [`04-solution-accelerators/`](./04-solution-accelerators/) | Solution accelerators (work in progress) |
 
 ## Getting Started
 
@@ -30,7 +32,7 @@ It starts with a minimal two-section structure — quickstarts and demos — and
    git clone https://github.com/Google-Cloud-AI/partner-ai-nvidia.git
    cd partner-ai-nvidia
    ```
-2. Start with [`01-quickstart/`](./01-quickstart/) to get up and running.
+2. Start with [`01-quickstarts/`](./01-quickstarts/) to get up and running.
 3. Explore end-to-end examples in [`02-demos/`](./02-demos/).
 
 ## Prerequisites

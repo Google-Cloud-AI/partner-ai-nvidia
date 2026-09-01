@@ -1,6 +1,4 @@
-# 01 — Quickstart
-
-> ⚠️ **Use at your own risk.** See [root disclaimer](../README.md).
+# 01 — Quickstarts
 
 Minimal, runnable quickstarts for getting up and running with NVIDIA models on Google Cloud.
 
