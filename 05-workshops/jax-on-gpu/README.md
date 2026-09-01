@@ -27,7 +27,7 @@ A practical introduction to using JAX on NVIDIA GPUs for AI workloads. Learners 
 
 ```bash
 git clone https://github.com/Google-Cloud-AI/partner-ai-nvidia.git
-cd partner-ai-nvidia/03-workshops/jax-on-gpu
+cd partner-ai-nvidia/05-workshops/jax-on-gpu
 
 docker run -it --rm \
   --gpus=all \
@@ -77,7 +77,7 @@ gcloud services enable \
 
 ```bash
 git clone https://github.com/Google-Cloud-AI/partner-ai-nvidia.git
-cd partner-ai-nvidia/03-workshops/jax-on-gpu
+cd partner-ai-nvidia/05-workshops/jax-on-gpu
 
 # 1. Configure your project
 cd terraform
