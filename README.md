@@ -14,13 +14,17 @@ This project is intended for demonstration and educational purposes only — it 
 
 This repository is a curated collection of integration work spanning **NVIDIA on Google Cloud**, covering Gemini Enterprise Agent Platform integrations, agentic AI patterns with ADK, MCP, A2A, model deployment and training, and deployment of NVIDIA-powered agents to **Gemini Enterprise Agent Platform**.
 
+It is organized into quickstarts, demos, guides, solution accelerators, and workshops, and will grow as needed.
+
 ## Repository Structure
 
 | Section | Description |
 |---|---|
-| [`01-quickstart/`](./01-quickstart/) | Minimal, runnable quickstarts to get up and running fast |
+| [`01-quickstarts/`](./01-quickstarts/) | Minimal, runnable quickstarts to get up and running fast |
 | [`02-demos/`](./02-demos/) | End-to-end demonstration applications |
-| [`03-workshops/`](./03-workshops/) | Hands-on, guided workshops for building NVIDIA-accelerated AI workloads on Google Cloud. |
+| [`03-guides/`](./03-guides/) | Guides and best practices (work in progress) |
+| [`04-solution-accelerators/`](./04-solution-accelerators/) | Solution accelerators (work in progress) |
+| [`05-workshops/`](./05-workshops/) | Hands-on, guided workshops for building NVIDIA-accelerated AI workloads on Google Cloud. |
 
 ## Getting Started
 
@@ -29,9 +33,9 @@ This repository is a curated collection of integration work spanning **NVIDIA on
    git clone https://github.com/Google-Cloud-AI/partner-ai-nvidia.git
    cd partner-ai-nvidia
    ```
-2. Start with [`01-quickstart/`](./01-quickstart/) to get up and running.
+2. Start with [`01-quickstarts/`](./01-quickstarts/) to get up and running.
 3. Explore end-to-end examples in [`02-demos/`](./02-demos/).
-4. Dive deep into workshops in [`03-workshops/`](./03-workshops/).
+4. Dive deep into workshops in [`05-workshops/`](./05-workshops/).
 
 ## Prerequisites
 
