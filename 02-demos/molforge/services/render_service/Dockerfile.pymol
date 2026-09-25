@@ -1,0 +1,59 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# MolForge Render Service — ray-traced 3D (PyMOL). Same code as the default
+# image; PyMOL is auto-preferred by mol3d.py when importable.
+#
+# Pinned by digest: mambaorg/micromamba:1.5.8 is still a moving tag (the base
+# OS underneath it gets rebuilt). To update: docker buildx imagetools inspect
+# mambaorg/micromamba:1.5.8, swap the digest, rebuild, confirm the smoke test.
+FROM mambaorg/micromamba:1.5.8@sha256:475730daef12ff9c0733e70092aeeefdf4c373a584c952dac3f7bdb739601990
+
+USER root
+WORKDIR /app
+
+# Every version pinned, and read out of the deployed molforge-render-pymol
+# image rather than resolved fresh -- this reproduces what is actually running.
+# Unpinned, `micromamba install pymol-open-source rdkit ...` resolves a
+# different environment on every rebuild, and the failure mode here is silent:
+# mol3d.render_structure() catches ImportError *and* generic Exception from the
+# PyMOL path and falls back to matplotlib, so a broken solve does not 500 -- it
+# just quietly turns every publication-quality render into a flat plot.
+RUN micromamba install -y -n base -c conda-forge \
+        python=3.12.14 \
+        pymol-open-source=3.1.0 \
+        rdkit=2026.03.5 \
+        matplotlib=3.11.1 \
+        numpy=2.5.2 \
+        pillow=12.3.0 \
+        fastapi=0.141.1 \
+        uvicorn=0.52.4 \
+        pydantic=2.13.5 \
+        google-cloud-storage=3.13.1 \
+        requests=2.34.2 \
+    && micromamba clean --all --yes
+
+# Must precede the smoke-test RUN, not just the CMD: without it the build shell
+# never activates the base env and the test would run against the system python.
+ARG MAMBA_DOCKERFILE_ACTIVATE=1
+
+COPY app.py mol3d.py smoketest.py ./
+
+# Fail the BUILD, not production. Asserts the PyMOL renderer actually
+# ray-traces a structure -- importing pymol2 is not enough, because the
+# fallback swallows runtime failures too. See smoketest.py.
+RUN python smoketest.py pymol
+
+ENV PORT=8080
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]

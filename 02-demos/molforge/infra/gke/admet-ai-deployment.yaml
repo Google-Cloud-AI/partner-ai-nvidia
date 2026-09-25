@@ -1,0 +1,69 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ${PROJECT_ID} is NOT resolved by kubectl -- expand it before applying:
+#     PROJECT_ID=<your-project> envsubst < infra/gke/admet-ai-deployment.yaml | kubectl apply -f -
+# It was previously hardcoded to the reference deployment's project, so a
+# straight `kubectl apply` pulled an image nobody else could read.
+# (setup.sh does not use this file -- it generates its manifests inline.)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admet-ai-service
+  namespace: default
+  labels:
+    app: admet-ai-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admet-ai-service
+  template:
+    metadata:
+      labels:
+        app: admet-ai-service
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      containers:
+      - name: admet-ai
+        image: us-central1-docker.pkg.dev/${PROJECT_ID}/molforge-repo/molforge-admet-ai:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "1"
+            memory: "4Gi"
+          limits:
+            cpu: "3"
+            memory: "8Gi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admet-ai-service
+  namespace: default
+spec:
+  selector:
+    app: admet-ai-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,13 @@
+# Pinned exactly, and verified against the running revision: these are the
+# versions read out of the deployed molforge-a2a image, not merely whatever
+# resolved on the day this was written.
+#
+# google-cloud-aiplatform especially: the previous `>=1.114.0` floor already
+# admitted 2.x, so the next rebuild could have crossed a major version under
+# the stream_query() calls the bridge depends on, with no change to this repo.
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+google-cloud-aiplatform[agent_engines]==2.1.0
+google-cloud-storage==3.13.1
+google-auth==2.57.0
+requests==2.34.2
