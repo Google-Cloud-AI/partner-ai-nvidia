@@ -1,0 +1,20 @@
+# PIN EVERYTHING. Whatever is listed here is what gets bundled into the
+# reasoning-engine runtime at `adk deploy` time, so an unpinned line means the
+# agent's runtime is decided by whatever the index resolves on deploy day.
+#
+# google-adk is already pinned for a known reason: 2.2.0 makes the reasoning
+# engine "failed to start and cannot serve traffic" -- it constructs fine
+# locally, the runtime just will not boot. google-cloud-aiplatform is the same
+# class of risk and was fully unpinned; it is the SDK the delegation tools call
+# stream_query() through, and it is held at 2.1.0 to match the A2A bridge so
+# client and runtime sit on the same major.
+#
+# Versions verified to co-resolve: `pip install --dry-run` with google-adk
+# pinned produces exactly this set (85 packages, no conflicts).
+#
+# NOTE: these take effect at the NEXT deploy. What the currently-running engine
+# resolved at its own deploy time is not knowable from here.
+google-adk==2.1.0
+google-cloud-aiplatform[agent_engines]==2.1.0
+requests==2.34.2
+google-cloud-storage==3.13.1

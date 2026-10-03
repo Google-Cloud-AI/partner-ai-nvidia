@@ -21,7 +21,7 @@ It is organized into quickstarts, demos, guides, solution accelerators, and work
 | Section | Description |
 |---|---|
 | [`01-quickstarts/`](./01-quickstarts/) | Minimal, runnable quickstarts to get up and running fast |
-| [`02-demos/`](./02-demos/) | End-to-end demonstration applications |
+| [`02-demos/`](./02-demos/) | End-to-end demonstration applications — currently [MolForge](./02-demos/molforge/), an agentic AI drug-discovery platform |
 | [`03-guides/`](./03-guides/) | Guides and best practices (work in progress) |
 | [`04-solution-accelerators/`](./04-solution-accelerators/) | Solution accelerators (work in progress) |
 | [`05-workshops/`](./05-workshops/) | Hands-on, guided workshops for building NVIDIA-accelerated AI workloads on Google Cloud. |
