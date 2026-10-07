@@ -2,7 +2,7 @@
 # container. JAX, Flax, Optax, Orbax, TransformerEngine, CUDA, and Nsight
 # Systems are supplied by nvcr.io/nvidia/jax:26.04-maxtext-py3.
 ipywidgets==8.1.9
-jupyterlab==4.6.3
+jupyterlab==4.6.4
 matplotlib==3.11.1
 nvtx==0.2.16
 setuptools==69.5.1
