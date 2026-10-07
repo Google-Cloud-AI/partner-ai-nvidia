@@ -1,0 +1,17 @@
+# Pinned exactly -- no floors. An unpinned rebuild months later resolves a
+# different dependency set than the one that was tested; that is how the ADMET
+# service shipped a container which passed /health and then 500'd on every
+# prediction. Bump deliberately and re-run the build smoke test.
+#
+# NOTE: this is the matplotlib-fallback image. The *deployed* render service is
+# built from Dockerfile.pymol, whose versions are pinned separately there (conda
+# solves the whole environment, so it cannot share this file).
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+rdkit==2024.9.4
+matplotlib==3.10.0
+numpy==2.2.1
+Pillow==11.1.0
+google-cloud-storage==3.13.1
+requests==2.34.2

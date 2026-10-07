@@ -1,0 +1,119 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# DiffDock NIM on a dedicated A100 nodepool.
+#
+# NOT part of the deployed v2 architecture — MolForge calls the *hosted* NVIDIA
+# DiffDock NIM at health.api.nvidia.com, and the one local GPU runs ESMFold.
+# This manifest is the self-hosted path: it is reference/lab material (Module 5
+# of the hands-on lab embeds it), and it stays here because setup.sh's
+# gen_diffdock_manifest() and the lab doc both cite it as their source.
+#
+# A100, not Blackwell, and deliberately so: DiffDock NIM 2.2.0 has no sm_120
+# build. When NVIDIA ships a Blackwell-capable NIM (2.3.x / 3.0), change the
+# nodeSelector below to the Blackwell pool, drop the gpu-diffdock-a100 pool,
+# and retire the three driver-compatibility env vars. See NOTES.md.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diffdock-service
+  labels: { app: diffdock-service, molforge.provider: nvidia }
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate               # one GPU; never run two pods against it
+  selector:
+    matchLabels: { app: diffdock-service }
+  template:
+    metadata:
+      labels: { app: diffdock-service, molforge.provider: nvidia }
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: gpu-diffdock-a100
+      tolerations:
+        - key: nvidia.com/gpu    # GKE auto-taints GPU nodes
+          operator: Exists
+          effect: NoSchedule
+      # Secret 1 of 2: authenticates the nvcr.io image pull, which happens on
+      # the NODE at runtime — not at Cloud Build time.
+      imagePullSecrets:
+        - name: ngc-secret
+      volumes:
+        - name: dshm
+          emptyDir: { medium: Memory, sizeLimit: 2Gi }
+        - name: nim-cache
+          emptyDir: { sizeLimit: 30Gi }
+      containers:
+        - name: diffdock
+          image: nvcr.io/nim/mit/diffdock:2.2.0
+          ports:
+            - containerPort: 8000
+          env:
+            # Secret 2 of 2: the NIM authenticates its own model-checkpoint
+            # download at startup with this key.
+            - name: NGC_API_KEY
+              valueFrom:
+                secretKeyRef: { name: ngc-runtime-key, key: NGC_API_KEY }
+            - name: NIM_CACHE_PATH
+              value: "/opt/nim/.cache"
+            # ── Driver-compatibility workarounds (all three are required) ──
+            # GKE nodes run driver 580+; the 2.2.0 container's
+            # NVIDIA_REQUIRE_CUDA metadata only lists 470/535/550/560/565, so
+            # without these it starts, never finds the driver libraries, and
+            # never reaches ready — it fails the startupProbe instead of
+            # erroring visibly.
+            - name: NVIDIA_DISABLE_REQUIRE      # 1. skip the version constraint
+              value: "true"
+            - name: LD_LIBRARY_PATH             # 2. where injected driver libs live
+              value: "/usr/local/nvidia/lib64:/usr/local/cuda/lib64"
+            - name: PATH                        # 3. nvidia-smi for HW detection
+              value: "/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          volumeMounts:
+            - { name: dshm, mountPath: /dev/shm }
+            - { name: nim-cache, mountPath: /opt/nim/.cache }
+          resources:
+            requests: { cpu: "4", memory: "16Gi", nvidia.com/gpu: "1" }
+            limits:   { cpu: "8", memory: "32Gi", nvidia.com/gpu: "1" }
+          # First start downloads ~8GB of model checkpoints; 30 × 15s + 30s
+          # initial delay allows ~15 min before the pod is declared failed.
+          startupProbe:
+            httpGet: { path: /v1/health/ready, port: 8000 }
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 60
+          readinessProbe:
+            httpGet: { path: /v1/health/ready, port: 8000 }
+            periodSeconds: 30
+---
+# ┌─────────────────────────────────────────────────────────────────────────┐
+# │ ⚠️  PRODUCTION SECURITY GAP — UNAUTHENTICATED PUBLIC ENDPOINT             │
+# │ This LoadBalancer exposes DiffDock to the public internet with NO auth.   │
+# │ Chosen ONLY for the time-boxed MVP so the off-cluster Lead Optimizer      │
+# │ Agent Runtime can reach it. BEFORE PRODUCTION: replace with an internal   │
+# │ LB + Private Service Connect, or front with IAP / an authenticated proxy, │
+# │ and have diffdock.py send a bearer token. Do NOT ship this as-is.         │
+# └─────────────────────────────────────────────────────────────────────────┘
+apiVersion: v1
+kind: Service
+metadata:
+  name: diffdock-service
+  labels: { app: diffdock-service }
+  annotations:
+    molforge.dev/security: "MVP-ONLY unauthenticated public LB — needs auth for prod"
+spec:
+  type: LoadBalancer
+  selector: { app: diffdock-service }
+  ports:
+    - port: 8000
+      targetPort: 8000

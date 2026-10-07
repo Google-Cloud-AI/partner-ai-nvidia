@@ -1,0 +1,87 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ESMFold on the always-warm RTX PRO 6000 Blackwell node (gpu-esm, us-south1-b).
+# The single local GPU workload in MolForge v2 — GenMol/DiffDock/Nemotron are hosted.
+# ${PROJECT_ID} is NOT resolved by kubectl -- expand it before applying:
+#     PROJECT_ID=<your-project> envsubst < services/esmfold/deployment.yaml | kubectl apply -f -
+# It was previously hardcoded to the reference deployment's project, so a
+# straight `kubectl apply` pulled an image nobody else could read.
+# (setup.sh does not use this file -- it generates its manifests inline.)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: esmfold
+  labels: { app: esmfold, tier: gpu }
+spec:
+  replicas: 1                      # always-warm; model resident in VRAM
+  selector:
+    matchLabels: { app: esmfold }
+  template:
+    metadata:
+      labels: { app: esmfold, tier: gpu }
+    spec:
+      nodeSelector:
+        workload: esm              # pin to the gpu-esm nodepool
+      tolerations:
+        - key: nvidia.com/gpu      # GKE auto-taints GPU nodes
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: esmfold
+          image: us-south1-docker.pkg.dev/${PROJECT_ID}/molforge-repo/molforge-esmfold:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MOLFORGE_ARTIFACTS_BUCKET
+              value: "molforge-artifacts"
+          resources:
+            requests: { cpu: "4", memory: "16Gi", nvidia.com/gpu: "1" }
+            limits:   { cpu: "8", memory: "32Gi", nvidia.com/gpu: "1" }
+          # First start downloads esmfold_v1 (~2.8GB) + loads to GPU (~2 min).
+          # Generous startupProbe so the pod isn't killed mid-load; /health flips
+          # model_loaded:true when ready.
+          startupProbe:
+            httpGet: { path: /health, port: 8000 }
+            periodSeconds: 10
+            failureThreshold: 90      # up to ~15 min for cold model pull+load
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+            periodSeconds: 15
+          livenessProbe:
+            httpGet: { path: /health, port: 8000 }
+            periodSeconds: 30
+            failureThreshold: 6
+---
+# ┌─────────────────────────────────────────────────────────────────────────┐
+# │ ⚠️  PRODUCTION SECURITY GAP — UNAUTHENTICATED PUBLIC ENDPOINT             │
+# │ This LoadBalancer exposes ESMFold to the public internet with NO auth.    │
+# │ Chosen ONLY for the time-boxed MVP so the off-cluster Lead Optimizer      │
+# │ Agent Runtime can reach it. BEFORE PRODUCTION: replace with an internal   │
+# │ LB + Private Service Connect, or front with IAP / an authenticated proxy, │
+# │ and have esmfold.py send a bearer token. Do NOT ship this as-is.          │
+# └─────────────────────────────────────────────────────────────────────────┘
+apiVersion: v1
+kind: Service
+metadata:
+  name: esmfold
+  labels: { app: esmfold }
+  annotations:
+    molforge.dev/security: "MVP-ONLY unauthenticated public LB — needs auth for prod"
+spec:
+  type: LoadBalancer
+  selector: { app: esmfold }
+  ports:
+    - port: 8000
+      targetPort: 8000

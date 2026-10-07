@@ -1,0 +1,18 @@
+# Do NOT add `#!include:.gitignore` here, and do not delete this file.
+# gcloud only auto-generates a .gcloudignore (which pulls in .gitignore) when
+# none exists. .gitignore excludes agents/*/.env, which are NOT optional -- they
+# carry GOOGLE_CLOUD_PROJECT and the sub-agent engine IDs, and the tools raise at
+# import without them. Excluding them from the build context ships agents that
+# deploy fine and then fail to start. The cloudbuilds assert they are present.
+
+.git/
+**/node_modules/
+**/dist/
+**/__pycache__/
+*.pyc
+*.bak.*
+**/*.bak.*
+*.pptx
+*.docx
+viewer/node_modules/
+viewer/dist/

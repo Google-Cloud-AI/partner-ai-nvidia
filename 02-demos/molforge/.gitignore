@@ -1,0 +1,67 @@
+# --- Secrets ---------------------------------------------------------------
+# Anything below is the shape a real credential would arrive in, so it must
+# never be committed. (The NVIDIA and NGC keys live in Secret Manager.)
+*.key
+*.pem
+*-key.json
+service-account*.json
+credentials.json
+.env.local
+.env.*.local
+
+# --- Generated agent config -------------------------------------------------
+# agents/*/.env are OUTPUTS, not sources: setup.sh::write_env truncates and
+# regenerates them on every run. They were tracked, which meant the repo shipped
+# one deployment's project and engine IDs as if they were defaults, and a
+# `git pull` could clobber a working local config. Templates live alongside as
+# .env.example; the real files stay local.
+agents/*/.env
+
+# --- Editor / tooling backups ----------------------------------------------
+*.bak
+*.bak.*
+*.orig
+*.old
+*~
+.DS_Store
+.idea/
+.vscode/
+
+# --- Python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+venv/
+.venv/
+
+# --- Node ------------------------------------------------------------------
+# Regenerable from the committed package-lock.json files.
+node_modules/
+viewer/dist/
+dashboard/dist/
+npm-debug.log*
+
+# --- Generated documents ---------------------------------------------------
+# Rendered from the Markdown sources; regenerate rather than commit binaries.
+*.docx
+*.pptx
+
+# --- Local scratch ---------------------------------------------------------
+*.log
+tmp/
+.tmp/
+.molforge-setup.conf
+.molforge-build/
+
+# --- Monorepo interop -------------------------------------------------------
+# The repository root ignores `.gcloudignore`, but MolForge's copy is required:
+# without it gcloud generates one from .gitignore, which excludes agents/*/.env
+# and produces agents that deploy and then fail to start. Re-include it here.
+!.gcloudignore
