@@ -1,0 +1,140 @@
+# Dependabot update configuration.
+#
+# Security updates are on by default for this public repository and do not need
+# a config file. What they need is grouping: without it Dependabot opens one
+# pull request per advisory, and a single ecosystem can produce dozens at once.
+# Every one of those then has to clear the code-owner review that branch
+# protection requires on `main`, which is how a routine patch turns into an
+# afternoon.
+#
+# So each directory below declares a single catch-all group. Dependabot bundles
+# that directory's updates into one branch and one pull request per run, which
+# is also the only way to review a lockfile change honestly -- npm resolves
+# transitive dependencies as a set, and bumping them one advisory at a time
+# produces lockfiles that never existed as a tested whole.
+#
+# `directories` with a glob is deliberately avoided: the two npm projects and
+# the seven Python projects want different review cadences, and an explicit
+# list makes it obvious when a new service is added and goes uncovered.
+
+version: 2
+
+updates:
+  # --- npm -----------------------------------------------------------------
+  # Both are Vite + React builds. Most of what Dependabot finds here is
+  # development-scope build tooling that never reaches a running container:
+  # the viewer's runtime stage installs with `npm ci --omit=dev`, and the
+  # dashboard ships as a static nginx bundle. Grouped weekly is enough.
+  - package-ecosystem: npm
+    directory: /02-demos/molforge/viewer
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      viewer-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /02-demos/molforge/dashboard
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      dashboard-dependencies:
+        patterns:
+          - "*"
+
+  # --- Python --------------------------------------------------------------
+  # One entry per deployable unit. These are pinned exactly (no floors) on
+  # purpose -- see the header of any requirements.txt -- so Dependabot is the
+  # mechanism that keeps an exact pin from quietly rotting.
+  #
+  # Caveat worth knowing before trusting a green dashboard here: the render
+  # service's *deployed* image is built from Dockerfile.pymol, which resolves
+  # its environment through conda. Dependabot cannot read that, so it reports
+  # on requirements.txt -- the matplotlib-fallback image -- only. Keep the two
+  # in step by hand.
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/a2a
+    schedule:
+      interval: weekly
+    groups:
+      a2a-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/orchestrator
+    schedule:
+      interval: weekly
+    groups:
+      orchestrator-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/lead_optimizer
+    schedule:
+      interval: weekly
+    groups:
+      lead-optimizer-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/admet_safety_agent
+    schedule:
+      interval: weekly
+    groups:
+      admet-safety-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/render_service
+    schedule:
+      interval: weekly
+    groups:
+      render-service-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/rdkit_service
+    schedule:
+      interval: weekly
+    groups:
+      rdkit-service-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/data_retrieval
+    schedule:
+      interval: weekly
+    groups:
+      data-retrieval-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /05-workshops/jax-on-gpu/deploy
+    schedule:
+      interval: weekly
+    groups:
+      jax-workshop-dependencies:
+        patterns:
+          - "*"
+
+  # --- GitHub Actions ------------------------------------------------------
+  # Actions are referenced by tag, which is mutable; keeping them current is
+  # the cheapest supply-chain control available on a public repository.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
