@@ -16,6 +16,14 @@
 # `directories` with a glob is deliberately avoided: the two npm projects and
 # the seven Python projects want different review cadences, and an explicit
 # list makes it obvious when a new service is added and goes uncovered.
+#
+# Every entry also sets a `cooldown`, which zizmor's `insufficient-cooldown`
+# audit requires and which is worth having on its own terms: it stops
+# Dependabot adopting a release the moment it is published, so a compromised
+# package has to survive a few days of public scrutiny before it can reach a
+# pull request here. The wait scales with how much a bump can break -- 30 days
+# for a major, 3 for a patch. This does NOT slow security patching: cooldown
+# applies to version updates only, and security updates ignore it.
 
 version: 2
 
@@ -29,6 +37,11 @@ updates:
     directory: /02-demos/molforge/viewer
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     open-pull-requests-limit: 3
     groups:
       viewer-dependencies:
@@ -39,6 +52,11 @@ updates:
     directory: /02-demos/molforge/dashboard
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     open-pull-requests-limit: 3
     groups:
       dashboard-dependencies:
@@ -59,6 +77,11 @@ updates:
     directory: /02-demos/molforge/a2a
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       a2a-dependencies:
         patterns:
@@ -68,6 +91,11 @@ updates:
     directory: /02-demos/molforge/agents/orchestrator
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       orchestrator-dependencies:
         patterns:
@@ -77,6 +105,11 @@ updates:
     directory: /02-demos/molforge/agents/lead_optimizer
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       lead-optimizer-dependencies:
         patterns:
@@ -86,6 +119,11 @@ updates:
     directory: /02-demos/molforge/agents/admet_safety_agent
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       admet-safety-dependencies:
         patterns:
@@ -95,6 +133,11 @@ updates:
     directory: /02-demos/molforge/services/render_service
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       render-service-dependencies:
         patterns:
@@ -104,6 +147,11 @@ updates:
     directory: /02-demos/molforge/services/rdkit_service
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       rdkit-service-dependencies:
         patterns:
@@ -113,6 +161,11 @@ updates:
     directory: /02-demos/molforge/services/data_retrieval
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       data-retrieval-dependencies:
         patterns:
@@ -122,6 +175,11 @@ updates:
     directory: /05-workshops/jax-on-gpu/deploy
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       jax-workshop-dependencies:
         patterns:
@@ -134,6 +192,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       actions:
         patterns:
