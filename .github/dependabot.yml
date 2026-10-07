@@ -192,11 +192,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Only `default-days` here: Dependabot rejects the `semver-*-days` keys for
+    # the github-actions ecosystem, because actions are referenced by tag
+    # rather than by a semver range it can reason about.
     cooldown:
       default-days: 7
-      semver-major-days: 30
-      semver-minor-days: 7
-      semver-patch-days: 3
     groups:
       actions:
         patterns:
