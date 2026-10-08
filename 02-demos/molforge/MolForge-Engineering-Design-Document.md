@@ -629,7 +629,7 @@ Gemini Enterprise discovers MolForge by fetching this card and registers the ski
 |----------|-----------|-------------|---------------|------------|
 | ADK Agents | Orchestrator, Lead Optimizer, ADMET Safety | Cloud Build (`adk deploy agent_engine`) | Agent Runtime | python:3.12-slim (inside Cloud Build step) |
 | GPU/CPU Services | GenMol, ESMFold, DiffDock, RDKit, ADMET-AI, Data Retrieval | Cloud Build (Docker) or `gcloud builds submit` | GKE | NGC PyTorch 26.02 (GPU) or python:3.12-slim (CPU) |
-| Web Tier | A2A Bridge, Viewer, Dashboard | `gcloud run deploy --source=.` | Cloud Run | python:3.12-slim (A2A) or node:20-alpine (Viewer, Dashboard) |
+| Web Tier | A2A Bridge, Viewer, Dashboard | `gcloud run deploy --source=.` | Cloud Run | python:3.12-slim (A2A) or node:22-alpine (Viewer) or node:20-alpine (Dashboard) |
 
 ### ADK Agents via Cloud Build
 
@@ -1145,7 +1145,7 @@ Every source file in the MolForge repository (excluding node_modules, .venv, __p
 |------|------------|
 | `viewer/server.js` | Express backend (GCS proxy for run data, structures, docking poses) |
 | `viewer/package.json` | Dependencies: React 18, Express, @google-cloud/storage, smiles-drawer, react-router-dom |
-| `viewer/Dockerfile` | Multi-stage: Node 20 build → Node 20 runtime (Express serves API + static) |
+| `viewer/Dockerfile` | Multi-stage: Node 22 build → Node 22 runtime (Express serves API + static) |
 | `viewer/vite.config.js` | Vite dev server on 5174 with /api proxy to Express |
 | `viewer/tailwind.config.js` | NVIDIA/Google/verdict color palette |
 | `viewer/index.html` | Entry HTML with RDKit WASM + 3Dmol.js CDN scripts |

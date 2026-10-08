@@ -1,0 +1,216 @@
+# Dependabot update configuration.
+#
+# Security updates are on by default for this public repository and do not need
+# a config file. What they need is grouping: without it Dependabot opens one
+# pull request per advisory, and a single ecosystem can produce dozens at once.
+# Every one of those then has to clear the code-owner review that branch
+# protection requires on `main`, which is how a routine patch turns into an
+# afternoon.
+#
+# So each directory below declares a single catch-all group. Dependabot bundles
+# that directory's updates into one branch and one pull request per run, which
+# is also the only way to review a lockfile change honestly -- npm resolves
+# transitive dependencies as a set, and bumping them one advisory at a time
+# produces lockfiles that never existed as a tested whole.
+#
+# `directories` with a glob is deliberately avoided: the two npm projects and
+# the seven Python projects want different review cadences, and an explicit
+# list makes it obvious when a new service is added and goes uncovered.
+#
+# Every entry also sets a `cooldown`, which zizmor's `insufficient-cooldown`
+# audit requires and which is worth having on its own terms: it stops
+# Dependabot adopting a release the moment it is published, so a compromised
+# package has to survive a few days of public scrutiny before it can reach a
+# pull request here. The wait scales with how much a bump can break -- 30 days
+# for a major, 3 for a patch. This does NOT slow security patching: cooldown
+# applies to version updates only, and security updates ignore it.
+
+version: 2
+
+updates:
+  # --- npm -----------------------------------------------------------------
+  # Both are Vite + React builds. Most of what Dependabot finds here is
+  # development-scope build tooling that never reaches a running container:
+  # the viewer's runtime stage installs with `npm ci --omit=dev`, and the
+  # dashboard ships as a static nginx bundle. Grouped weekly is enough.
+  #
+  # `tailwindcss` major bumps are ignored on both entries: v3 -> v4 is a
+  # CSS-first rewrite (moves the PostCSS plugin to `@tailwindcss/postcss`,
+  # replaces `@tailwind` directives with `@import "tailwindcss"`, and drops
+  # `tailwind.config.js`), so a manifest-only Dependabot bump breaks
+  # `npm run build` while still passing repo CI. Migrate both apps together
+  # by hand when ready.
+  - package-ecosystem: npm
+    directory: /02-demos/molforge/viewer
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      viewer-dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: npm
+    directory: /02-demos/molforge/dashboard
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    open-pull-requests-limit: 3
+    groups:
+      dashboard-dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+
+  # --- Python --------------------------------------------------------------
+  # One entry per deployable unit. These are pinned exactly (no floors) on
+  # purpose -- see the header of any requirements.txt -- so Dependabot is the
+  # mechanism that keeps an exact pin from quietly rotting.
+  #
+  # Caveat worth knowing before trusting a green dashboard here: the render
+  # service's *deployed* image is built from Dockerfile.pymol, which resolves
+  # its environment through conda. Dependabot cannot read that, so it reports
+  # on requirements.txt -- the matplotlib-fallback image -- only. Keep the two
+  # in step by hand.
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/a2a
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      a2a-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/orchestrator
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      orchestrator-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/lead_optimizer
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      lead-optimizer-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/agents/admet_safety_agent
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      admet-safety-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/render_service
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      render-service-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/rdkit_service
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      rdkit-service-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /02-demos/molforge/services/data_retrieval
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      data-retrieval-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /05-workshops/jax-on-gpu/deploy
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+      semver-minor-days: 7
+      semver-patch-days: 3
+    groups:
+      jax-workshop-dependencies:
+        patterns:
+          - "*"
+
+  # --- GitHub Actions ------------------------------------------------------
+  # Actions are referenced by tag, which is mutable; keeping them current is
+  # the cheapest supply-chain control available on a public repository.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Only `default-days` here: Dependabot rejects the `semver-*-days` keys for
+    # the github-actions ecosystem, because actions are referenced by tag
+    # rather than by a semver range it can reason about.
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"
