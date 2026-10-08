@@ -33,6 +33,13 @@ updates:
   # development-scope build tooling that never reaches a running container:
   # the viewer's runtime stage installs with `npm ci --omit=dev`, and the
   # dashboard ships as a static nginx bundle. Grouped weekly is enough.
+  #
+  # `tailwindcss` major bumps are ignored on both entries: v3 -> v4 is a
+  # CSS-first rewrite (moves the PostCSS plugin to `@tailwindcss/postcss`,
+  # replaces `@tailwind` directives with `@import "tailwindcss"`, and drops
+  # `tailwind.config.js`), so a manifest-only Dependabot bump breaks
+  # `npm run build` while still passing repo CI. Migrate both apps together
+  # by hand when ready.
   - package-ecosystem: npm
     directory: /02-demos/molforge/viewer
     schedule:
@@ -47,6 +54,9 @@ updates:
       viewer-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: /02-demos/molforge/dashboard
@@ -62,6 +72,9 @@ updates:
       dashboard-dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
 
   # --- Python --------------------------------------------------------------
   # One entry per deployable unit. These are pinned exactly (no floors) on
