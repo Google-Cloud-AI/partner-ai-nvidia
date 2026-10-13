@@ -14,7 +14,7 @@
 #
 # NOTE: these take effect at the NEXT deploy. What the currently-running engine
 # resolved at its own deploy time is not knowable from here.
-google-adk==2.1.0
-google-cloud-aiplatform[agent_engines]==2.1.0
+google-adk==2.11.0
+google-cloud-aiplatform[agent_engines]==2.3.0
 requests==2.34.2
-google-cloud-storage==3.13.1
+google-cloud-storage==3.16.0
