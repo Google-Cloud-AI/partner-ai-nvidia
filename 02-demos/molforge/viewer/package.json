@@ -12,21 +12,24 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "@google-cloud/storage": "^7.12.1",
-    "express": "^4.21.0",
+    "@google-cloud/storage": "^8.3.0",
+    "express": "^4.22.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.1",
-    "react-router-dom": "^6.26.1",
+    "react-router-dom": "^7.18.4",
     "remark-gfm": "^4.0.0",
     "smiles-drawer": "^2.1.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.20",
-    "concurrently": "^9.0.1",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.10",
-    "vite": "^5.4.2"
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.6.1",
+    "concurrently": "^10.0.5",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19",
+    "vite": "^6.4.4"
+  },
+  "overrides": {
+    "shell-quote": ">=1.12.0"
   }
 }

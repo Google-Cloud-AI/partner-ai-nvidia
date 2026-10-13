@@ -14,13 +14,13 @@
 
 # Stage 1: build the React frontend
 #
-# Pinned by digest: node:20-alpine is a moving tag. Dependencies here are
+# Pinned by digest: node:22-alpine is a moving tag. Dependencies here are
 # already lockfile-pinned by `npm ci`, so the base image is the one input that
 # could still change under a rebuild -- and a floating base is exactly what
 # broke the ADMET service on 2026-09-03.
-# To update: docker buildx imagetools inspect node:20-alpine, swap the digest,
+# To update: docker buildx imagetools inspect node:22-alpine, swap the digest,
 # rebuild, and confirm the smoke test below still passes.
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS build
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS build
 WORKDIR /app
 
 # Install all deps (dev deps needed for vite build)
@@ -32,7 +32,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: runtime — node running Express that serves both API + built React
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS runtime
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
