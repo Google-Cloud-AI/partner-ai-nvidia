@@ -6,12 +6,12 @@
 # NOTE: this is the matplotlib-fallback image. The *deployed* render service is
 # built from Dockerfile.pymol, whose versions are pinned separately there (conda
 # solves the whole environment, so it cannot share this file).
-fastapi==0.115.6
-uvicorn[standard]==0.34.0
-pydantic==2.10.4
-rdkit==2024.9.4
-matplotlib==3.10.0
-numpy==2.2.1
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+pydantic==2.13.5
+rdkit==2026.3.6
+matplotlib==3.11.2
+numpy==2.5.3
 Pillow==12.3.0
-google-cloud-storage==3.13.1
+google-cloud-storage==3.16.0
 requests==2.34.2
