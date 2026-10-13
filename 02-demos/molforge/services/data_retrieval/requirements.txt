@@ -6,8 +6,8 @@
 # rcsb-api was installed but never imported: app.py queries the RCSB REST API
 # through `requests` directly. Dropped rather than pinned -- an unused
 # dependency is still a dependency that can break a build.
-fastapi==0.141.1
-uvicorn==0.52.4
+fastapi==0.142.2
+uvicorn==0.54.0
 requests==2.34.2
-pydantic==2.12.4
-google-cloud-storage==3.13.1
+pydantic==2.13.5
+google-cloud-storage==3.16.0
