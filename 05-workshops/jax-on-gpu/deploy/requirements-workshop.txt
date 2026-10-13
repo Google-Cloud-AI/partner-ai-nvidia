@@ -3,9 +3,9 @@
 # Systems are supplied by nvcr.io/nvidia/jax:26.04-maxtext-py3.
 ipywidgets==8.1.9
 jupyterlab==4.6.4
-matplotlib==3.11.1
+matplotlib==3.11.2
 nvtx==0.2.16
-setuptools==83.0.0
+setuptools==84.0.0
 tensorboard==2.21.0
 tensorflow==2.21.0
-xprof==2.23.1
+xprof==2.23.2
