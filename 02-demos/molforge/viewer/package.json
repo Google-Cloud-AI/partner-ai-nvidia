@@ -13,21 +13,21 @@
   },
   "dependencies": {
     "@google-cloud/storage": "^8.3.0",
-    "express": "^4.22.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-markdown": "^9.0.1",
+    "express": "^5.2.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.18.4",
     "remark-gfm": "^4.0.0",
     "smiles-drawer": "^2.1.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^6.1.1",
     "autoprefixer": "^10.6.1",
-    "concurrently": "^10.0.5",
+    "concurrently": "^10.0.6",
     "postcss": "^8.5.29",
     "tailwindcss": "^3.4.19",
-    "vite": "^6.4.4"
+    "vite": "^8.3.0"
   },
   "overrides": {
     "shell-quote": ">=1.12.0"
