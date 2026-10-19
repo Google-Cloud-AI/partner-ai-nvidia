@@ -2,6 +2,6 @@
 # different dependency set than the one running in production -- that is how
 # the ADMET service shipped a container that passed /health and then returned
 # 500 on every prediction. Bump deliberately and re-run the build smoke test.
-fastapi==0.141.1
-uvicorn==0.52.4
-rdkit==2026.3.5
+fastapi==0.143.0
+uvicorn==0.54.0
+rdkit==2026.9.1
