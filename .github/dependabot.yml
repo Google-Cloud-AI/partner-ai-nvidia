@@ -113,6 +113,8 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/orchestrator
@@ -129,6 +131,9 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/lead_optimizer
@@ -145,6 +150,9 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/admet_safety_agent
@@ -161,6 +169,9 @@ updates:
         applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/services/render_service
@@ -227,9 +238,8 @@ updates:
           - "*"
 
   # --- GitHub Actions ------------------------------------------------------
-  # Actions in `.github/workflows/lint.yml` are referenced by tag, and zizmor's
-  # `unpinned-uses` check rejects tag-to-tag version bumps unless the workflow
-  # is SHA-pinned. Scope this entry to security updates as well.
+  # Actions in `.github/workflows/lint.yml` are SHA-pinned to satisfy zizmor's
+  # `unpinned-uses` check. Scope this entry to security updates as well.
   - package-ecosystem: github-actions
     directory: /
     schedule:
