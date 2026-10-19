@@ -7,15 +7,19 @@
 # protection requires on `main`, which is how a routine patch turns into an
 # afternoon.
 #
-# So each directory below declares a single catch-all group. Dependabot bundles
-# that directory's updates into one branch and one pull request per run, which
-# is also the only way to review a lockfile change honestly -- npm resolves
-# transitive dependencies as a set, and bumping them one advisory at a time
-# produces lockfiles that never existed as a tested whole.
+# So each directory below declares a single catch-all group with
+# `applies-to: security-updates` and sets `open-pull-requests-limit: 0`. In
+# Dependabot v2:
+#   - `open-pull-requests-limit: 0` disables routine non-security version-update
+#     sweeps (which otherwise churn intentionally pinned runtimes such as
+#     `google-adk==2.1.0` or Express 4 -> 5 without running container smoke
+#     tests in repo CI), while keeping `groups` and `ignore` active for
+#     Dependabot security updates.
+#   - `applies-to: security-updates` is required on each group because `groups`
+#     default to `version-updates` when omitted.
 #
-# `directories` with a glob is deliberately avoided: the two npm projects and
-# the seven Python projects want different review cadences, and an explicit
-# list makes it obvious when a new service is added and goes uncovered.
+# `directories` with a glob is deliberately avoided: an explicit list makes it
+# obvious when a new service is added and goes uncovered.
 #
 # Every entry also sets a `cooldown`, which zizmor's `insufficient-cooldown`
 # audit requires and which is worth having on its own terms: it stops
@@ -32,14 +36,16 @@ updates:
   # Both are Vite + React builds. Most of what Dependabot finds here is
   # development-scope build tooling that never reaches a running container:
   # the viewer's runtime stage installs with `npm ci --omit=dev`, and the
-  # dashboard ships as a static nginx bundle. Grouped weekly is enough.
+  # dashboard ships as a static nginx bundle.
   #
-  # `tailwindcss` major bumps are ignored on both entries: v3 -> v4 is a
-  # CSS-first rewrite (moves the PostCSS plugin to `@tailwindcss/postcss`,
-  # replaces `@tailwind` directives with `@import "tailwindcss"`, and drops
-  # `tailwind.config.js`), so a manifest-only Dependabot bump breaks
-  # `npm run build` while still passing repo CI. Migrate both apps together
-  # by hand when ready.
+  # `tailwindcss >= 4.0.0` (and its v3 transitive `postcss-selector-parser`)
+  # are ignored via `versions` rather than `update-types`: `update-types` only
+  # filters version updates, whereas `versions` also filters security updates.
+  # Tailwind v3 -> v4 is a CSS-first rewrite (moves the PostCSS plugin to
+  # `@tailwindcss/postcss`, replaces `@tailwind` directives with
+  # `@import "tailwindcss"`, and drops `tailwind.config.js`), so a manifest-only
+  # Dependabot bump breaks `npm run build` while still passing repo CI. Migrate
+  # both apps together by hand when ready.
   - package-ecosystem: npm
     directory: /02-demos/molforge/viewer
     schedule:
@@ -49,14 +55,16 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     groups:
       viewer-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
     ignore:
       - dependency-name: "tailwindcss"
-        update-types: ["version-update:semver-major"]
+        versions: [">= 4.0.0"]
+      - dependency-name: "postcss-selector-parser"
 
   - package-ecosystem: npm
     directory: /02-demos/molforge/dashboard
@@ -67,19 +75,23 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     groups:
       dashboard-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
     ignore:
       - dependency-name: "tailwindcss"
-        update-types: ["version-update:semver-major"]
+        versions: [">= 4.0.0"]
+      - dependency-name: "postcss-selector-parser"
 
   # --- Python --------------------------------------------------------------
-  # One entry per deployable unit. These are pinned exactly (no floors) on
-  # purpose -- see the header of any requirements.txt -- so Dependabot is the
-  # mechanism that keeps an exact pin from quietly rotting.
+  # One entry per deployable unit. These are pinned to the exact versions
+  # verified in the deployed Cloud Run / Reasoning Engine revisions -- see the
+  # header of each requirements.txt. `open-pull-requests-limit: 0` with
+  # `applies-to: security-updates` ensures Dependabot only opens a grouped PR
+  # when a real security advisory requires moving a pin.
   #
   # Caveat worth knowing before trusting a green dashboard here: the render
   # service's *deployed* image is built from Dockerfile.pymol, which resolves
@@ -95,10 +107,14 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       a2a-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/orchestrator
@@ -109,10 +125,15 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       orchestrator-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/lead_optimizer
@@ -123,10 +144,15 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       lead-optimizer-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/agents/admet_safety_agent
@@ -137,10 +163,15 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       admet-safety-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "google-adk"
+      - dependency-name: "google-cloud-aiplatform"
 
   - package-ecosystem: pip
     directory: /02-demos/molforge/services/render_service
@@ -151,8 +182,10 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       render-service-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -165,8 +198,10 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       rdkit-service-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -179,8 +214,10 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       data-retrieval-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
 
@@ -193,14 +230,16 @@ updates:
       semver-major-days: 30
       semver-minor-days: 7
       semver-patch-days: 3
+    open-pull-requests-limit: 0
     groups:
       jax-workshop-dependencies:
+        applies-to: security-updates
         patterns:
           - "*"
 
   # --- GitHub Actions ------------------------------------------------------
-  # Actions are referenced by tag, which is mutable; keeping them current is
-  # the cheapest supply-chain control available on a public repository.
+  # Actions in `.github/workflows/lint.yml` are SHA-pinned to satisfy zizmor's
+  # `unpinned-uses` check. Scope this entry to security updates as well.
   - package-ecosystem: github-actions
     directory: /
     schedule:
@@ -210,7 +249,9 @@ updates:
     # rather than by a semver range it can reason about.
     cooldown:
       default-days: 7
+    open-pull-requests-limit: 0
     groups:
       actions:
+        applies-to: security-updates
         patterns:
           - "*"
